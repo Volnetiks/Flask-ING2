@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+  Ludothèque - ESAIP
+</h1>
+<h2 class="subtitle">
+  Voici les jeux disponibles actuellement
+</h2>
+<div id="app" class="row columns is-multiline">
+  {% for jeu in jeux %}
+  <div class="is-4 column">
+    <div class="card">
+      <div class="card-image">
+        <figure class="image is-4by3">
+          <img
+            src="https://bulma.io/assets/images/placeholders/1280x960.png"
+            alt="Placeholder image"
+          />
+        </figure>
+      </div>
+      <div class="card-content">
+        <div class="media">
+          <div class="media-left">
+            <figure class="image is-48x48">
+              <img
+                src="https://bulma.io/assets/images/placeholders/96x96.png"
+                alt="Placeholder image"
+              />
+            </figure>
+          </div>
+          <div class="media-content">
+            <p class="title is-4 has-text-black">{{ jeu.nom }}</p>
+            <p class="subtitle is-6 has-text-black">{{ jeu.categorie }}, {{ jeu.duree }}</p>
+          </div>
+        </div>
+    
+        <div class="content">
+          De {{ jeu.joueursmin }} à {{ jeu.joueursmax }} joueurs, à partir de {{ jeu.age }} ans.
+          <br />
+          <time datetime="2016-1-1">{{ jeu.annee }}</time>
+        </div>
+      </div>
+      <footer class="card-footer">
+        <a href="{{ url_for('main.reservation_confirmation', nom=jeu.nom)}}" class="card-footer-item">Réserver</a>
+      </footer>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+[
+    {
+        "categorie": "Strat\u00e9gie",
+        "nom": "Risk 2",
+        "annee": 1957,
+        "joueursmin": 2,
+        "joueursmax": 6,
+        "age": 10,
+        "duree": "120 minutes",
+        "disponible": "False"
+    },
+    {
+        "categorie": "Fantasy",
+        "nom": "Les Contr\u00e9es de l'Horreur",
+        "annee": 2013,
+        "joueursmin": 1,
+        "joueursmax": 8,
+        "age": 14,
+        "duree": "2 \u00e0 3 heures",
+        "disponible": "True"
+    },
+    {
+        "categorie": "Aventure",
+        "nom": "Carcassonne",
+        "annee": 2000,
+        "joueursmin": 2,
+        "joueursmax": 5,
+        "age": 7,
+        "duree": "30 \u00e0 45 minutes",
+        "disponible": "False"
+    },
+    {
+        "categorie": "Familial",
+        "nom": "Dixit",
+        "annee": 2008,
+        "joueursmin": 3,
+        "joueursmax": 6,
+        "age": 8,
+        "duree": "30 minutes",
+        "disponible": "True"
+    },
+    {
+        "categorie": "Coop\u00e9ratif",
+        "nom": "Pandemic",
+        "annee": 2008,
+        "joueursmin": 2,
+        "joueursmax": 4,
+        "age": 8,
+        "duree": "45 minutes",
+        "disponible": "True"
+    },
+    {
+        "categorie": "Aventure",
+        "nom": "Dongeons et Dragons",
+        "annee": 1974,
+        "joueursmin": 1,
+        "joueursmax": 100,
+        "age": 12,
+        "duree": "X",
+        "disponible": "True"
+    },
+    {
+        "categorie": "Familial",
+        "nom": "Time's Up!",
+        "annee": 1999,
+        "joueursmin": 4,
+        "joueursmax": 12,
+        "age": 12,
+        "duree": "60 minutes",
+        "disponible": "True"
+    },
+    {
+        "categorie": "Strat\u00e9gie",
+        "nom": "Agricola",
+        "annee": 2007,
+        "joueursmin": 1,
+        "joueursmax": 4,
+        "age": 12,
+        "duree": "30 \u00e0 150 minutes",
+        "disponible": "True"
+    },
+    {
+        "categorie": "Jeu de bluff",
+        "nom": "Poker",
+        "annee": "Inconnu",
+        "joueursmin": 2,
+        "joueursmax": 100,
+        "age": 18,
+        "duree": "X",
+        "disponible": "True"
+    }
+]

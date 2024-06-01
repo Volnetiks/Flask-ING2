@@ -1,0 +1,20 @@
+[
+    {
+        "email": "volnetiks@gmail.com",
+        "name": "Volnetiks",
+        "password": "Volnetiks",
+        "id": 1,
+        "jeux": [
+            {
+                "categorie": "Strat\u00e9gie",
+                "nom": "Risk 2",
+                "annee": 1957,
+                "joueursmin": 2,
+                "joueursmax": 6,
+                "age": 10,
+                "duree": "120 minutes",
+                "disponible": "False"
+            }
+        ]
+    }
+]
