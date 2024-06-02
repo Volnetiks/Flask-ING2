@@ -5,8 +5,6 @@ from .models.game import Game
 
 from . import db
 
-import json
-
 main = Blueprint('main', __name__)
 
 @main.route("/")

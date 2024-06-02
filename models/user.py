@@ -1,4 +1,3 @@
-import json
 from flask_login import UserMixin
 
 class User(UserMixin):
@@ -14,11 +13,3 @@ class User(UserMixin):
         self.password = password
         self.name = name
         self.games = games
-
-
-    def toJSON(self):
-        return json.dumps(
-            self,
-            default=lambda o: o.__dict__, 
-            sort_keys=True,
-            indent=4)
