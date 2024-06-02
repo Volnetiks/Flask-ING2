@@ -1,23 +1,24 @@
-from flask_login import UserMixin
-from .jeu import Jeu
 import json
-
+from flask_login import UserMixin
 
 class User(UserMixin):
-    def __init__(self, email, name, password, id, jeux) -> None:
-        self.email = email
-        self.name = name
-        self.password = password
+    id = ""
+    email = ""
+    password = ""
+    name = ""
+    games = []
+
+    def __init__(self, id, email, name, password, games = []) -> None:
         self.id = id
-        self.jeux = jeux
+        self.email = email
+        self.password = password
+        self.name = name
+        self.games = games
 
 
-def recuperer_uilisateur(id) -> User:
-    with open("./db/utilisateurs.json", "r") as f:
-        utilisateursData = json.load(f)
-        for utilisateurData in utilisateursData:
-            if int(utilisateurData["id"]) == int(id):
-                return User(utilisateurData["email"], utilisateurData["name"], utilisateurData["password"], id, [Jeu(
-                    jeu["nom"], jeu["categorie"], jeu["annee"], jeu["joueursmin"], jeu["joueursmax"], jeu["age"], jeu["duree"], jeu["disponible"]) for jeu in utilisateurData["jeux"]])
-
-    return None
+    def toJSON(self):
+        return json.dumps(
+            self,
+            default=lambda o: o.__dict__, 
+            sort_keys=True,
+            indent=4)

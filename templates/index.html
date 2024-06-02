@@ -8,7 +8,7 @@
   Voici les jeux disponibles actuellement
 </h2>
 <div id="app" class="row columns is-multiline">
-  {% for jeu in jeux %}
+  {% for game in games %}
   <div class="is-4 column">
     <div class="card">
       <div class="card-image">
@@ -30,19 +30,19 @@
             </figure>
           </div>
           <div class="media-content">
-            <p class="title is-4 has-text-black">{{ jeu.nom }}</p>
-            <p class="subtitle is-6 has-text-black">{{ jeu.categorie }}, {{ jeu.duree }}</p>
+            <p class="title is-4 has-text-black">{{ game.name }}</p>
+            <p class="subtitle is-6 has-text-black">{{ game.category }}, {{ game.length }}</p>
           </div>
         </div>
     
         <div class="content">
-          De {{ jeu.joueursmin }} à {{ jeu.joueursmax }} joueurs, à partir de {{ jeu.age }} ans.
+          De {{ game.minPlayer }} à {{ game.maxPlayer }} joueurs, à partir de {{ game.age }} ans.
           <br />
-          <time datetime="2016-1-1">{{ jeu.annee }}</time>
+          <time datetime="2016-1-1">{{ game.year }}</time>
         </div>
       </div>
       <footer class="card-footer">
-        <a href="{{ url_for('main.reservation_confirmation', nom=jeu.nom)}}" class="card-footer-item">Réserver</a>
+        <a href="{{ url_for('main.reservation_confirmation', name=game.name)}}" class="card-footer-item">Réserver</a>
       </footer>
     </div>
   </div>

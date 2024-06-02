@@ -1,9 +1,12 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from flask_login import login_user, login_required, logout_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
-from .models.jeu import Jeu
+from .models.game import Game
+
 from .models.user import User
-import json
+
+from . import db, db_connection
 
 auth = Blueprint("auth", __name__)
 
@@ -18,21 +21,21 @@ def login_post():
     email = request.form.get("email")
     password = request.form.get("password")
     remember_me = True if request.form.get("remember") else False
-    user = None
 
-    with open("./db/utilisateurs.json", "r") as f:
-        utilisateursData = json.load(f)
-        for utilisateurData in utilisateursData:
-            if utilisateurData["email"] == email and utilisateurData["password"] == password:
-                user = User(email, utilisateurData["name"],
-                            password, int(utilisateurData["id"]), [Jeu(
-                                jeu["nom"], jeu["categorie"], jeu["annee"], jeu["joueursmin"], jeu["joueursmax"], jeu["age"], jeu["duree"], jeu["disponible"]) for jeu in utilisateurData["jeux"]])
-                login_user(user, remember=remember_me)
+    db.execute("SELECT * FROM users WHERE email = %s;", (email,))
 
-    if user == None:
-        flash("Erreur dans les identifiants")
-        return redirect(url_for("auth.login"))
+    user_data = db.fetchone()
+    user = User(user_data[0], user_data[1], user_data[2], user_data[3])
 
+    if not user or not check_password_hash(user.password, password):
+        flash("Verifier vos identifiants.")
+        return redirect(url_for('auth.login'))
+    
+    db.execute("SELECT * FROM games WHERE user_id = %s;", (user.id,))
+    for gameData in db:
+        user.games.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8]))
+
+    login_user(user, remember=remember_me)
     return redirect(url_for("main.profile"))
 
 
@@ -47,23 +50,14 @@ def signup_post():
     name = request.form.get("name")
     password = request.form.get("password")
 
-    users = []
+    db.execute("SELECT * FROM users WHERE email = %s;", (email,))
 
-    with open("./db/utilisateurs.json", "r") as f:
-        utilisateursData = json.load(f)
-        for utilisateurData in utilisateursData:
-            id = utilisateurData["id"]
-            users.append(User(
-                utilisateurData["email"], utilisateurData["name"], utilisateurData["password"], id, []))
-            if utilisateurData["email"] == email:
-                flash("Cette addresse email est déjà utilisé")
-                return redirect(url_for("auth.signup"))
+    if len(db.fetchall()) > 0:
+        flash("Un utilisateur avec cette addresse e-mail existe déjà.")
+        return redirect(url_for('auth.signup'))
 
-    id = len(users) + 1
-
-    with open("./db/utilisateurs.json", "w") as f:
-        users.append(User(email, name, password, id))
-        json.dump(users, f, indent=4, default=obj_dict)
+    db.execute("INSERT INTO users (email, name, password) VALUES (%s, %s, %s)", (email, name, generate_password_hash(password)))
+    db_connection.commit()
 
     return redirect(url_for("auth.login"))
 

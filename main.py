@@ -1,165 +1,96 @@
 from flask import Blueprint, render_template, redirect, url_for, request
 from flask_login import login_required, current_user
 
-from .models.user import User
-from .models.jeu import Jeu
+from .models.game import Game
+
+from . import db
+
 import json
 
 main = Blueprint('main', __name__)
 
-
 @main.route("/")
 def index():
-    jeux = []
-    with open("./db/jeux.json", "r") as f:
-        jeuxData = json.load(f)
-        for jeuData in jeuxData:
-            if jeuData["disponible"] == "True":
-                jeux.append(Jeu(jeuData["nom"], jeuData["categorie"], jeuData["annee"], jeuData["joueursmin"],
-                                jeuData["joueursmax"], jeuData["age"], jeuData["duree"], jeuData["disponible"]))
+    games = []
 
-    return render_template("index.html", jeux=jeux)
+    db.execute("SELECT * FROM games WHERE user_id IS NULL")
+    for gameData in db:
+        games.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8]))
+
+    return render_template("index.html", games=games)
 
 
-@main.route("/recherche", methods=["POST"])
-def recherche():
-    value = request.form.get("recherche")
-    jeux = []
-    with open("./db/jeux.json", "r") as f:
-        jeuxData = json.load(f)
-        for jeuData in jeuxData:
-            if value.lower() in jeuData["nom"].lower() or value.lower() in jeuData["categorie"].lower():
-                jeux.append(Jeu(jeuData["nom"], jeuData["categorie"], jeuData["annee"], jeuData["joueursmin"],
-                                jeuData["joueursmax"], jeuData["age"], jeuData["duree"], jeuData["disponible"]))
-            elif value.isnumeric():
-                if jeuData["annee"] == int(value) or (jeuData["joueursmin"] < int(value) and jeuData["joueursmax"] > int(value)) or (jeuData["age"] < int(value) and int(value) < 100):
-                    jeux.append(Jeu(jeuData["nom"], jeuData["categorie"], jeuData["annee"], jeuData["joueursmin"],
-                                jeuData["joueursmax"], jeuData["age"], jeuData["duree"], jeuData["disponible"]))
+@main.route("/research", methods=["POST"])
+def research():
+    value = request.form.get("research")
+    games = []
+    db.execute("SELECT * FROM games WHERE name ILIKE %s", ("%" + value + "%",))
 
-    return render_template('recherche.html', jeux=jeux, value=value)
+    for gameData in db:
+        games.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8]))
+
+    return render_template('research.html', games=games, value=value)
 
 
-@main.route("/recherche")
-def recherche_tout():
-    jeux = []
-    with open("./db/jeux.json", "r") as f:
-        jeuxData = json.load(f)
-        for jeuData in jeuxData:
-            jeux.append(Jeu(jeuData["nom"], jeuData["categorie"], jeuData["annee"], jeuData["joueursmin"],
-                            jeuData["joueursmax"], jeuData["age"], jeuData["duree"], jeuData["disponible"]))
+@main.route("/research")
+def research_all():
+    games = []
 
-    return render_template('recherche.html', jeux=jeux)
+    db.execute("SELECT * FROM games WHERE user_id IS NULL")
+    for gameData in db:
+        games.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8]))
+
+    return render_template('research.html', games=games)
 
 
 @main.route("/profile")
 @login_required
 def profile():
-    return render_template("profile.html", name=current_user.name, jeux=current_user.jeux)
+    return render_template("profile.html", name=current_user.name, games=current_user.games)
 
 
-@main.route("/reservation")
+@main.route("/reservation_confirmation/<name>")
 @login_required
-def reservation():
-    jeux = []
-    with open("./db/jeux.json", "r") as f:
-        jeuxData = json.load(f)
-        for jeuData in jeuxData:
-            if jeuData["disponible"] == "True":
-                jeux.append(Jeu(jeuData["nom"], jeuData["categorie"], jeuData["annee"], jeuData["joueursmin"],
-                                jeuData["joueursmax"], jeuData["age"], jeuData["duree"], jeuData["disponible"]))
+def reservation_confirmation(name):
+    db.execute("SELECT * FROM games WHERE name = %s;", (name,))
 
-    return render_template("reservation.html", jeux=jeux)
+    gameData = db.fetchone()
+
+    if gameData is None:
+        return render_template("main.index")
+    
+    game = Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8])
+
+    return render_template("reservation_confirmation.html", game=game)
 
 
-@main.route("/reservation_confirmation/<nom>")
+@main.route("/return_confirmation/<name>")
 @login_required
-def reservation_confirmation(nom):
-    jeu = None
-    with open("./db/jeux.json", "r") as f:
-        jeuxData = json.load(f)
-        for jeuData in jeuxData:
-            if jeuData["nom"] == nom:
-                jeu = Jeu(jeuData["nom"], jeuData["categorie"], jeuData["annee"], jeuData["joueursmin"],
-                          jeuData["joueursmax"], jeuData["age"], jeuData["duree"], jeuData["disponible"])
+def return_confirmation(name):
+    db.execute("SELECT * FROM games WHERE name = %s;", (name,))
 
-    return render_template("reservation_confirmation.html", jeu=jeu)
+    gameData = db.fetchone()
+
+    if gameData is None:
+        return render_template("main.profile")
+    
+    game = Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8])
+
+    return render_template("return_confirmation.html", game=game)
 
 
-@main.route("/retour_confirmation/<nom>")
+@main.route("/reservation_confirmation/<name>", methods=["POST"])
 @login_required
-def retour_confirmation(nom):
-    jeu = None
-    with open("./db/jeux.json", "r") as f:
-        jeuxData = json.load(f)
-        for jeuData in jeuxData:
-            if jeuData["nom"] == nom:
-                jeu = Jeu(jeuData["nom"], jeuData["categorie"], jeuData["annee"], jeuData["joueursmin"],
-                          jeuData["joueursmax"], jeuData["age"], jeuData["duree"], jeuData["disponible"])
-
-    return render_template("retour_confirmation.html", jeu=jeu)
-
-
-@main.route("/reservation_confirmation/<nom>", methods=["POST"])
-@login_required
-def reservation_confirmation_post(nom):
-    jeux = []
-    with open("./db/jeux.json", "r") as f:
-        jeuxData = json.load(f)
-        for jeuData in jeuxData:
-            jeux.append(Jeu(jeuData["nom"], jeuData["categorie"], jeuData["annee"], jeuData["joueursmin"],
-                            jeuData["joueursmax"], jeuData["age"], jeuData["duree"], jeuData["disponible"]))
-
-    jeu = next(j for j, v in enumerate(jeux) if v.nom == nom)
-    jeux[jeu].disponible = "False"
-    with open("./db/jeux.json", "w") as f:
-        json.dump(jeux, f, indent=4, default=obj_dict)
-    utilisateurs = []
-    with open("./db/utilisateurs.json", "r") as f:
-        utilisateursData = json.load(f)
-        for utilisateurData in utilisateursData:
-            utilisateurs.append(User(utilisateurData["email"], utilisateurData["name"], utilisateurData["password"], utilisateurData["id"], [Jeu(
-                jeu["nom"], jeu["categorie"], jeu["annee"], jeu["joueursmin"], jeu["joueursmax"], jeu["age"], jeu["duree"], jeu["disponible"]) for jeu in utilisateurData["jeux"]]))
-
-    indexUser = next(u for u, v in enumerate(utilisateurs)
-                     if v.name == current_user.name)
-    utilisateurs[indexUser].jeux.append(jeux[jeu])
-
-    with open("./db/utilisateurs.json", "w") as f:
-        json.dump(utilisateurs, f, indent=4, default=obj_dict)
+def reservation_confirmation_post(name):
+    db.execute("UPDATE games SET user_id = %s WHERE name = %s", (current_user.id, name))
 
     return redirect(url_for("main.profile"))
 
 
-@main.route("/retour_confirmation/<nom>", methods=["POST"])
+@main.route("/return_confirmation/<name>", methods=["POST"])
 @login_required
-def retour_confirmation_post(nom):
-    jeux = []
-    with open("./db/jeux.json", "r") as f:
-        jeuxData = json.load(f)
-        for jeuData in jeuxData:
-            jeux.append(Jeu(jeuData["nom"], jeuData["categorie"], jeuData["annee"], jeuData["joueursmin"],
-                            jeuData["joueursmax"], jeuData["age"], jeuData["duree"], jeuData["disponible"]))
-
-    jeu = next(j for j, v in enumerate(jeux) if v.nom == nom)
-    jeux[jeu].disponible = "True"
-    with open("./db/jeux.json", "w") as f:
-        json.dump(jeux, f, indent=4, default=obj_dict)
-
-    utilisateurs = []
-    with open("./db/utilisateurs.json", "r") as f:
-        utilisateursData = json.load(f)
-        for utilisateurData in utilisateursData:
-            utilisateurs.append(User(utilisateurData["email"], utilisateurData["name"], utilisateurData["password"], utilisateurData["id"], [Jeu(
-                jeu["nom"], jeu["categorie"], jeu["annee"], jeu["joueursmin"], jeu["joueursmax"], jeu["age"], jeu["duree"], jeu["disponible"]) for jeu in utilisateurData["jeux"]]))
-
-    indexUser = next(u for u, v in enumerate(utilisateurs)
-                     if v.name == current_user.name)
-    indexJeu = next(j for j, v in enumerate(
-        utilisateurs[indexUser].jeux) if v.nom == nom)
-    utilisateurs[indexUser].jeux.pop(indexJeu)
-
-    with open("./db/utilisateurs.json", "w") as f:
-        json.dump(utilisateurs, f, indent=4, default=obj_dict)
+def return_confirmation_post(name):
+    db.execute("UPDATE games SET user_id = NULL WHERE name = %s", (name,))
 
     return redirect(url_for("main.profile"))
 
