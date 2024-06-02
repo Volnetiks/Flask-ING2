@@ -28,6 +28,12 @@
                                 Profile
                             </a>
 
+                            {% if current_user.admin %}
+                            <a href="{{ url_for('admin.main') }}" class="navbar-item">
+                                Administration
+                            </a>
+                            {% endif %}
+
                             <a href="{{ url_for('auth.logout') }}" class="navbar-item">
                                 Se déconnecter
                             </a>

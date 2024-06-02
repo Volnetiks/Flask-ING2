@@ -25,7 +25,7 @@ def login_post():
     db.execute("SELECT * FROM users WHERE email = %s;", (email,))
 
     user_data = db.fetchone()
-    user = User(user_data[0], user_data[1], user_data[2], user_data[3])
+    user = User(user_data[0], user_data[1], user_data[2], user_data[3], [], user_data[4])
 
     if not user or not check_password_hash(user.password, password):
         flash("Verifier vos identifiants.")

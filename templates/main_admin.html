@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="title">
+  Bonjour, {{ name }}!
+  Que souhaitez-vous faire aujourd'hui?
+</h1>
+<div id="app" class="row columns is-multiline">
+  {% for user in users %}
+  <div class="is-4 column">
+    <div class="card">
+      <div class="card-content">
+        <div class="content">
+          {{ user.name }}, {{ user.email }}
+          <br />
+          Jeux possédés:{% for game in user.games %} {{ game.name }},{% endfor %}
+        </div>
+      </div>
+      <footer class="card-footer">
+        <a href="#" class="card-footer-item">Modifier</a>
+        <a href="#" class="card-footer-item">Supprimer</a>
+      </footer>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

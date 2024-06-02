@@ -25,7 +25,7 @@ def create_app():
         db.execute("SELECT * FROM users WHERE id = %s;", (user_id,))
         user_data = db.fetchone()
 
-        user = User(user_data[0], user_data[1], user_data[2], user_data[3], [])
+        user = User(user_data[0], user_data[1], user_data[2], user_data[3], [], user_data[4])
 
         db.execute("SELECT * FROM games WHERE user_id = %s;", (user_id,))
         for gameData in db:
@@ -38,5 +38,8 @@ def create_app():
 
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
+
+    from .admin import admin as admin_blueprint
+    app.register_blueprint(admin_blueprint)
 
     return app
