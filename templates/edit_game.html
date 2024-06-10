@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="column is-4 is-offset-4">
+    <h3 class="title">Modifier un jeu</h3>
+    <div class="box">
+        <form action="{{ url_for('admin.edit_game', game_id=game.id)}}" method="POST">
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" name="name" placeholder="Nom du jeu" autofocus="">
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" name="category" placeholder="Catégorie">
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" name="length" placeholder="Durée">
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="number" step="1" name="minPlayer" placeholder="Minimum de joueurs" min="0">
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="number" step="1" name="maxPlayer" placeholder="Maximum de joueurs" min="0">
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="number" step="1" name="age" placeholder="Age requis" min="0">
+                </div>
+            </div>
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="number" step="1" name="year" placeholder="Année de sortie" min="0">
+                </div>
+            </div>
+            <button class="button is-block is-info is-large is-fullwidth">Login</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
