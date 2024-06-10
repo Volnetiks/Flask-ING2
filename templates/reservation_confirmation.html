@@ -3,10 +3,10 @@
 {% block content %}
 <h1 class="title">
     Souhaitez-vous confirmer la réservation de ce jeu?
-    <h1 class="subtitle is-5">{{ jeu.nom }}</h1>
-    <h1 class="subtitle is-6">{{ jeu.categorie }}, {{ jeu.annee }}, de {{ jeu.joueursmin }} à {{ jeu.joueursmax }}, {{ jeu.age }}, {{ jeu.duree }}</h1>
+    <h1 class="subtitle is-5">{{ game.name }}</h1>
+    <h1 class="subtitle is-6">{{ game.category }}, {{ game.year }}, de {{ game.minPlayer }} à {{ game.maxPlayer }}, {{ game.age }}, {{ game.length }}</h1>
     <div class="field is-grouped is-grouped-centered">
-        <form action="{{ url_for('main.reservation_confirmation', nom=jeu.nom)}}" method="POST" class="control">
+        <form action="{{ url_for('main.reservation_confirmation', name=game.name)}}" method="POST" class="control">
             <button class="button is-success">Confirmer</button>
         </form>
         <p class="control">

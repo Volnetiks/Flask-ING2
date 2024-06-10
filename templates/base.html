@@ -20,13 +20,19 @@
                             <a href="{{ url_for('main.index') }}" class="navbar-item">
                                 Accueil
                             </a>
-                            <a href="{{ url_for('main.recherche') }}" class="navbar-item">
+                            <a href="{{ url_for('main.research') }}" class="navbar-item">
                                 Recherche
                             </a>
                             {% if current_user.is_authenticated %}
                             <a href="{{ url_for('main.profile') }}" class="navbar-item">
                                 Profile
                             </a>
+
+                            {% if current_user.admin %}
+                            <a href="{{ url_for('admin.main') }}" class="navbar-item">
+                                Administration
+                            </a>
+                            {% endif %}
 
                             <a href="{{ url_for('auth.logout') }}" class="navbar-item">
                                 Se déconnecter
