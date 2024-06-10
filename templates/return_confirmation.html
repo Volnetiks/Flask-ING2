@@ -3,7 +3,7 @@
 {% block content %}
 <h1 class="title">
     Souhaitez-vous confirmer le retour de ce jeu?
-    <h1 class="subtitle is-5">{{ game.nam }}</h1>
+    <h1 class="subtitle is-5">{{ game.name }}</h1>
     <h1 class="subtitle is-6">{{ game.category }}, {{ game.year }}, de {{ game.minPlayer }} à {{ game.maxPlayer }}, {{ game.age }}, {{ game.length }}</h1>
     <div class="field is-grouped is-grouped-centered">
         <form action="{{ url_for('main.return_confirmation', name=game.name)}}" method="POST" class="control">
