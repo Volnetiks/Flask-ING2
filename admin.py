@@ -30,9 +30,25 @@ def main():
 
 
 @login_required
-@admin.route("/confirm_delete_user")
-def confirm_delete_user():
+@admin.route("/delete_user_confirm/<uuid>")
+def delete_user_confirm(uuid):
     if not current_user.admin:
         return redirect(url_for('main.profile'))
     
+    db.execute("SELECT * FROM users WHERE id = %s;", (uuid,))
+    user_data = db.fetchone()
+
+    user = User(user_data[0], user_data[1], user_data[2], user_data[3], [], user_data[4])
+
+    return render_template("delete_user_confirmation.html", user=user)
+
+@login_required
+@admin.route("/delete_user_confirm/<uuid>", methods=["POST"])
+def delete_user_confirm_post(uuid):
+    if not current_user.admin:
+        return redirect(url_for('main.profile'))
     
+    db.execute("UPDATE games SET user_id = NULL WHERE user_id = %s;", (uuid,))
+    db.execute("DELETE FROM users WHERE id = %s", (uuid,))
+
+    return redirect(url_for("admin.main"))
