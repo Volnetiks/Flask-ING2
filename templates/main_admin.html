@@ -18,7 +18,7 @@
         </div>
       </div>
       <footer class="card-footer">
-        <a href="#" class="card-footer-item">Modifier</a>
+        <a href="{{ url_for('admin.edit_user', user_id=user.id) }}" class="card-footer-item">Modifier</a>
         <a href="{{ url_for('admin.delete_user_confirm', uuid=user.id)}}" class="card-footer-item">Supprimer</a>
       </footer>
     </div>

@@ -100,3 +100,34 @@ def edit_game_post(game_id):
         db.execute("UPDATE games SET length = %s WHERE id = %s;", (request.form.get("length"), game_id))
 
     return redirect(url_for("admin.main"))
+
+@login_required
+@admin.route("/edit_user/<user_id>")
+def edit_user(user_id):
+    if not current_user.admin:
+        return redirect(url_for('main.profile'))
+    db.execute("SELECT * FROM users WHERE id = %s;", (user_id,))
+    user_data = db.fetchone()
+
+    user = User(user_data[0], user_data[1], user_data[2], user_data[3], [], user_data[4])
+    
+    return render_template("edit_user.html", user=user)
+
+@login_required
+@admin.route("/edit_user/<user_id>", methods=["POST"])
+def edit_user_post(user_id):
+    if not current_user.admin:
+        return redirect(url_for('main.profile'))
+    
+    if request.form.get("email"):
+        db.execute("UPDATE users SET email = %s WHERE id = %s", (request.form.get("email"), user_id))
+    
+    if request.form.get("name"):
+        db.execute("UPDATE users SET name = %s WHERE id = %s;", (request.form.get("name"), user_id))
+
+    if request.form.get("admin"):
+        db.execute("UPDATE users SET admin = TRUE WHERE id = %s", (user_id,))
+    else:
+        db.execute("UPDATE users SET admin = FALSE WHERE id = %s", (user_id,))
+        
+    return redirect(url_for("admin.main"))
