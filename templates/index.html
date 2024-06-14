@@ -42,6 +42,11 @@
         </div>
       </div>
       <footer class="card-footer">
+        {% if game.favorite %}
+        <a href="{{ url_for('main.remove_favorite', gameId=game.id) }}" class="card-footer-item">Enlever des favoris</a>
+        {% else %}
+        <a href="{{ url_for('main.add_favorite', gameId=game.id) }}" class="card-footer-item">Ajouter des favoris</a>
+        {% endif %}
         <a href="{{ url_for('main.reservation_confirmation', name=game.name)}}" class="card-footer-item">Réserver</a>
       </footer>
     </div>

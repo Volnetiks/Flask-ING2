@@ -8,8 +8,9 @@ class Game():
     age = 0
     length = ""
     user_id = ""
+    favorite = False
 
-    def __init__(self, id, name, year, minPlayer, maxPlayer, age, length, user_id, category) -> None:
+    def __init__(self, id, name, year, minPlayer, maxPlayer, age, length, user_id, category, favorite=False) -> None:
         self.id = id
         self.name = name
         self.year = year
@@ -19,3 +20,4 @@ class Game():
         self.length = length
         self.user_id = user_id
         self.category = category
+        self.favorite = favorite

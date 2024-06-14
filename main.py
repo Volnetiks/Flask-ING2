@@ -11,9 +11,15 @@ main = Blueprint('main', __name__)
 def index():
     games = []
 
-    db.execute("SELECT * FROM games WHERE user_id IS NULL")
+    db.execute('SELECT g.id, g.name, g.year, g."minPlayer", g."maxPlayer", g.age, g.length, g.user_id, g.category, u.favorite FROM games as g LEFT JOIN __game_user__ as u on g.id = u.game_id AND u.user_id = %s', (current_user.id,))
     for gameData in db:
-        games.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8]))
+        print(gameData)
+        games.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8], gameData[9] if gameData[9] else False))
+
+    print(games[0].category)
+    # db.execute("SELECT * FROM games WHERE user_id IS NULL")
+    # for gameData in db:
+    #     games.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8]))
 
     return render_template("index.html", games=games)
 
@@ -44,7 +50,7 @@ def research_all():
 @main.route("/profile")
 @login_required
 def profile():
-    return render_template("profile.html", name=current_user.name, games=current_user.games)
+    return render_template("profile.html", name=current_user.name, games=current_user.games, favoriteGames=current_user.favoriteGames)
 
 
 @main.route("/reservation_confirmation/<name>")
@@ -92,6 +98,19 @@ def return_confirmation_post(name):
 
     return redirect(url_for("main.profile"))
 
+@main.route("/add_favorite/<gameId>")
+@login_required
+def add_favorite(gameId):
+    db.execute("INSERT INTO __game_user__ as g (user_id, game_id, favorite) VALUES (%s, %s, TRUE) ON CONFLICT(user_id, game_id) DO UPDATE SET favorite = TRUE WHERE g.game_id = %s", (current_user.id, gameId, gameId))
+
+    return redirect(request.referrer)
+
+@main.route("/remove_favorite/<gameId>")
+@login_required
+def remove_favorite(gameId):
+    db.execute("UPDATE __game_user__ SET favorite = FALSE WHERE game_id = %s AND user_id = %s", (gameId, current_user.id))
+
+    return redirect(request.referrer)
 
 def obj_dict(obj):
     return obj.__dict__
