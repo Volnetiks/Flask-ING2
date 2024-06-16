@@ -31,9 +31,15 @@ def research():
     value = request.form.get("research")
     games = []
     db.execute("SELECT * FROM games WHERE name ILIKE %s", ("%" + value + "%",))
+    gamesData = db.fetchall()
 
-    for gameData in db:
-        games.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8]))
+    for gameData in gamesData:
+        game = Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8])
+        db.execute('SELECT AVG(grade), COUNT(grade) FROM __game_user__ WHERE game_id = %s', (game.id,))
+        gradeData = db.fetchone()
+        game.grade = gradeData[0] if gradeData[0] is not None else 0
+        game.gradeCount = gradeData[1]
+        games.append(game)
 
     return render_template('research.html', games=games, value=value)
 
@@ -41,10 +47,17 @@ def research():
 @main.route("/research")
 def research_all():
     games = []
-
+    
     db.execute("SELECT * FROM games WHERE user_id IS NULL")
-    for gameData in db:
-        games.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8]))
+    gamesData = db.fetchall()
+
+    for gameData in gamesData:
+        game = Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8])
+        db.execute('SELECT AVG(grade), COUNT(grade) FROM __game_user__ WHERE game_id = %s', (game.id,))
+        gradeData = db.fetchone()
+        game.grade = gradeData[0] if gradeData[0] is not None else 0
+        game.gradeCount = gradeData[1]
+        games.append(game)
 
     return render_template('research.html', games=games)
 

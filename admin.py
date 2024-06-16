@@ -31,7 +31,12 @@ def main():
         users.append(user)   
 
     for game_data in games_data:
-        games.append(Game(game_data[0], game_data[1], game_data[2], game_data[3], game_data[4], game_data[5], game_data[6], game_data[7], game_data[8]))
+        game = Game(game_data[0], game_data[1], game_data[2], game_data[3], game_data[4], game_data[5], game_data[6], game_data[7], game_data[8])
+        db.execute('SELECT AVG(grade), COUNT(grade) FROM __game_user__ WHERE game_id = %s', (game.id,))
+        gradeData = db.fetchone()
+        game.grade = gradeData[0] if gradeData[0] is not None else 0
+        game.gradeCount = gradeData[1]
+        games.append(game)
 
     return render_template("main_admin.html", users=users, name=current_user.name, games=games)
 
