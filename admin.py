@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, request
+from flask import Blueprint, flash, render_template, redirect, url_for, request
 from flask_login import current_user, login_required
+from werkzeug.security import generate_password_hash
 
 from .models.game import Game
 from .models.user import User
@@ -56,6 +57,29 @@ def delete_user_confirm_post(uuid):
     
     db.execute("UPDATE games SET user_id = NULL WHERE user_id = %s;", (uuid,))
     db.execute("DELETE FROM users WHERE id = %s", (uuid,))
+
+    return redirect(url_for("admin.main"))
+
+@login_required
+@admin.route("/delete_game_confirm/<uuid>")
+def delete_game_confirm(uuid):
+    if not current_user.admin:
+        return redirect(url_for('main.profile'))
+    
+    db.execute("SELECT * FROM games WHERE id = %s;", (uuid,))
+    gameData = db.fetchone()
+
+    game = Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8])
+
+    return render_template("delete_game_confirmation.html", game=game)
+
+@login_required
+@admin.route("/delete_game_confirm/<uuid>", methods=["POST"])
+def delete_game_confirm_post(uuid):
+    if not current_user.admin:
+        return redirect(url_for('main.profile'))
+    
+    db.execute("DELETE FROM games WHERE id = %s", (uuid,))
 
     return redirect(url_for("admin.main"))
 
@@ -130,4 +154,60 @@ def edit_user_post(user_id):
     else:
         db.execute("UPDATE users SET admin = FALSE WHERE id = %s", (user_id,))
         
+    return redirect(url_for("admin.main"))
+
+@login_required
+@admin.route("/create_user")
+def create_user():
+    if not current_user.admin:
+        return redirect(url_for('main.profile'))
+
+    return render_template("create_user.html")
+
+@login_required
+@admin.route("/create_user", methods=["POST"])
+def create_user_post():
+    if not current_user.admin:
+        return redirect(url_for('main.profile'))
+    
+    email = request.form.get("email")
+    name = request.form.get("name")
+    password = request.form.get("password")
+    admin = True if request.form.get("admin") else False
+
+    db.execute("SELECT * FROM users WHERE email = %s;", (email,))
+
+    if len(db.fetchall()) > 0:
+        flash("Un utilisateur avec cette addresse e-mail existe déjà.")
+        return redirect(url_for('admin.create_user'))
+
+    db.execute("INSERT INTO users (email, name, password, admin) VALUES (%s, %s, %s, %s)", (email, name, generate_password_hash(password), admin))
+
+    return redirect(url_for("admin.main"))
+
+
+@login_required
+@admin.route("/create_game")
+def create_game():
+    if not current_user.admin:
+        return redirect(url_for('main.profile'))
+
+    return render_template("create_game.html")
+
+@login_required
+@admin.route("/create_game", methods=["POST"])
+def create_game_post():
+    if not current_user.admin:
+        return redirect(url_for('main.profile'))
+    
+    name = request.form.get("name")
+    category = request.form.get("category")
+    length = request.form.get("length")
+    minPlayer = request.form.get("minPlayer")
+    maxPlayer = request.form.get("maxPlayer")
+    age = request.form.get("age")
+    year = request.form.get("year")
+
+    db.execute('INSERT INTO games (name, category, year, "minPlayer", "maxPlayer", age, length) VALUES (%s, %s, %s, %s, %s, %s, %s)', (name, category, year, minPlayer, maxPlayer, age, length))
+
     return redirect(url_for("admin.main"))

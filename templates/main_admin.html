@@ -6,6 +6,9 @@
   Que souhaitez-vous faire aujourd'hui?
 </h1>
 <h2 class="subtitle">Utilisateurs</h2>
+<a href="{{ url_for('admin.create_user') }}" class="button is-link">
+  Ajouter un utilisateur
+</a>
 <div id="app" class="row columns is-multiline">
   {% for user in users %}
   <div class="is-4 column">
@@ -28,6 +31,9 @@
 <h2 class="subtitle">
   Jeux
 </h2>
+<a href="{{ url_for('admin.create_game') }}" class="button is-link">
+  Ajouter un jeu
+</a>
 <div id="games" class="row columns is-multiline">
   {% for game in games %}
   <div class="is-4 column">
@@ -64,6 +70,7 @@
       </div>
       <footer class="card-footer">
         <a href="{{ url_for('admin.edit_game', game_id=game.id) }}" class="card-footer-item">Modifier</a>
+        <a href="{{ url_for('admin.delete_game_confirm', uuid=game.id)}}" class="card-footer-item">Supprimer</a>
       </footer>
     </div>
   </div>
