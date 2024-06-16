@@ -6,14 +6,17 @@
     <h1 class="subtitle is-5">{{ game.name }}</h1>
     <h1 class="subtitle is-6">{{ game.category }}, {{ game.year }}, de {{ game.minPlayer }} à {{ game.maxPlayer }}, {{ game.age }}, {{ game.length }}</h1>
     <div class="field is-grouped is-grouped-centered">
-        <form action="{{ url_for('main.return_confirmation', name=game.name)}}" method="POST" class="control">
+        <form action="{{ url_for('main.return_confirmation', name=game.name, gameId=game.id)}}" method="POST" class="control">
+            <div class="field">
+                <div class="control">
+                    <input class="input is-large" type="number" step="0.1" name="grade" placeholder="Noter le jeu (0 à 5 étoiles)" min="0" max="5">
+                </div>
+            </div>
             <button class="button is-success">Confirmer</button>
-        </form>
-        <p class="control">
             <a href="{{ url_for('main.profile') }}" class="button is-danger">
                 Annuler
             </a>
-        </p>
+        </form>
     </div>
 </h1>
 {% endblock %}

@@ -9,8 +9,10 @@ class Game():
     length = ""
     user_id = ""
     favorite = False
+    grade = 0
+    gradeCount = 0
 
-    def __init__(self, id, name, year, minPlayer, maxPlayer, age, length, user_id, category, favorite=False) -> None:
+    def __init__(self, id, name, year, minPlayer, maxPlayer, age, length, user_id, category, favorite=False, grade = 0, gradeCount = 0) -> None:
         self.id = id
         self.name = name
         self.year = year
@@ -21,3 +23,5 @@ class Game():
         self.user_id = user_id
         self.category = category
         self.favorite = favorite
+        self.grade = grade
+        self.gradeCount = gradeCount
