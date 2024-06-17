@@ -25,11 +25,19 @@ def create_app():
         db.execute("SELECT * FROM users WHERE id = %s;", (user_id,))
         user_data = db.fetchone()
 
-        user = User(user_data[0], user_data[1], user_data[2], user_data[3], [], user_data[4])
+        user = User(user_data[0], user_data[1], user_data[2], user_data[3], [], user_data[4], favoriteGames=[])
 
         db.execute("SELECT * FROM games WHERE user_id = %s;", (user_id,))
         for gameData in db:
             user.games.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8]))
+
+        db.execute("SELECT * FROM __game_user__ WHERE user_id = %s AND favorite = TRUE", (user_id,))
+        gamesIds = db.fetchall()
+        for gameId in gamesIds:
+            db.execute("SELECT * FROM games WHERE id = %s;", (gameId[1],))
+            for gameData in db:
+                user.favoriteGames.append(Game(gameData[0], gameData[1], gameData[2], gameData[3], gameData[4], gameData[5], gameData[6], gameData[7], gameData[8]))
+
 
         return user
 

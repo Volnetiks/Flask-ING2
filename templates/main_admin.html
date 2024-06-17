@@ -6,6 +6,9 @@
   Que souhaitez-vous faire aujourd'hui?
 </h1>
 <h2 class="subtitle">Utilisateurs</h2>
+<a href="{{ url_for('admin.create_user') }}" class="button is-link">
+  Ajouter un utilisateur
+</a>
 <div id="app" class="row columns is-multiline">
   {% for user in users %}
   <div class="is-4 column">
@@ -28,6 +31,9 @@
 <h2 class="subtitle">
   Jeux
 </h2>
+<a href="{{ url_for('admin.create_game') }}" class="button is-link">
+  Ajouter un jeu
+</a>
 <div id="games" class="row columns is-multiline">
   {% for game in games %}
   <div class="is-4 column">
@@ -51,7 +57,7 @@
             </figure>
           </div>
           <div class="media-content">
-            <p class="title is-4 has-text-black">{{ game.name }}</p>
+            <p class="title is-4 has-text-black">{{ game.name }}, {{ game.year }}</p>
             <p class="subtitle is-6 has-text-black">{{ game.category }}, {{ game.length }}</p>
           </div>
         </div>
@@ -59,11 +65,12 @@
         <div class="content">
           De {{ game.minPlayer }} à {{ game.maxPlayer }} joueurs, à partir de {{ game.age }} ans.
           <br />
-          <time datetime="2016-1-1">{{ game.year }}</time>
+          {{ game.grade }}/5 ({{ game.gradeCount }})
         </div>
       </div>
       <footer class="card-footer">
         <a href="{{ url_for('admin.edit_game', game_id=game.id) }}" class="card-footer-item">Modifier</a>
+        <a href="{{ url_for('admin.delete_game_confirm', uuid=game.id)}}" class="card-footer-item">Supprimer</a>
       </footer>
     </div>
   </div>

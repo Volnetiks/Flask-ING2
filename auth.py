@@ -57,7 +57,6 @@ def signup_post():
         return redirect(url_for('auth.signup'))
 
     db.execute("INSERT INTO users (email, name, password) VALUES (%s, %s, %s)", (email, name, generate_password_hash(password)))
-    db_connection.commit()
 
     return redirect(url_for("auth.login"))
 
